@@ -38,7 +38,7 @@ const logger = {
 };
 
 class WalletTransferMonitor {
-  constructor(walletAddress, wssUrl, rpcUrl = clusterApiUrl('mainnet-beta'), webhookUrl = 'http://localhost:3000/webhook/transfer') {
+  constructor(walletAddress, wssUrl, rpcUrl = clusterApiUrl('mainnet-beta'), webhookUrl = process.env.WEBHOOK_URL || 'http://localhost:3000/webhook/transfer') {
     this.wallet = new PublicKey(walletAddress);
     this.walletAddress = walletAddress;
 
@@ -575,12 +575,12 @@ let monitor;
 (async () => {
   try {
     const walletAddress = process.env.WALLET_ADDRESS || 'BM9CcyErJcu2mjrFvUsRRrD3snGeHDDVirJLvL6EjvMN';
-    const webhookUrl = `http://localhost:${PORT}/webhook/transfer`;
+   
 
     logger.info('Configuration:');
     logger.info(`- Wallet: ${walletAddress}`);
     logger.info(`- RPC URL: ${process.env.RPC_URL}`);
-    logger.info(`- Webhook: ${webhookUrl}`);
+    logger.info(`- Webhook: ${process.env.WEBHOOK_URL || 'http://localhost:3000/webhook/transfer'}`);
 
 
 
@@ -588,7 +588,7 @@ let monitor;
       walletAddress,
       process.env.RPC_URL,
       clusterApiUrl('mainnet-beta'),
-      webhookUrl
+      process.env.WEBHOOK_URL || 'http://localhost:3000/webhook/transfer'
     );
 
     await monitor.start();
