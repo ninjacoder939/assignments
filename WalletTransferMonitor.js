@@ -1,3 +1,8 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// Network - SOL 
+// Script Desc - (Particular) Wallet Sol IN/OUT and Token IN/OUT monitoring, telegram messaging
+// Assignment march 2026
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 const axios = require('axios');
 const express = require('express');
 const {
@@ -9,7 +14,7 @@ const {
 const { TOKEN_PROGRAM_ID, getMint } = require('@solana/spl-token');
 require('dotenv').config();
 
-// Configuration constants
+// All Configuration constants
 const CONFIG = {
   RATE_LIMIT: {
     BASE_DELAY_MS: 2000,
@@ -29,7 +34,7 @@ const CONFIG = {
   }
 };
 
-// Logger utility
+// My Logger utility
 const logger = {
   info: (message, ...args) => console.log(`[INFO] ${message}`, ...args),
   error: (message, ...args) => console.error(`[ERROR] ${message}`, ...args),
@@ -379,7 +384,7 @@ class WalletTransferMonitor {
     const direction = source.includes(this.walletAddress) ? 'OUT' : 'IN';
 
     logger.info(
-      `[TOKEN ${direction}] ${uiAmount.toFixed(6)} ${symbol}\n` +
+      `[🪙TOKEN ${direction}] ${uiAmount.toFixed(6)} ${symbol}\n` +
       `  Mint:     ${mint}\n` +
       `  From ATA: ${source}\n` +
       `  To ATA:   ${destination}\n` +
@@ -474,27 +479,27 @@ class TelegramService {
   }
 
   formatSolTransfer(data, explorerUrl, shortSource, shortDest) {
-    const emoji = data.direction === 'IN' ? '📥' : '📤';
+    const emoji = data.direction === 'IN' ? '⬇️' : '⬆️';
     
-    return `${emoji} <b>SOL ${data.direction}</b>\n` +
-           `💰 <b>Amount:</b> ${data.amountSol} SOL\n` +
-           `📤 <b>From:</b> <code>${shortSource}</code>\n` +
-           `📥 <b>To:</b> <code>${shortDest}</code>\n` +
-           `🔗 <b>Tx:</b> <a href="${explorerUrl}">View</a>\n` +
-           `⏱ <b>Time:</b> ${new Date(data.time).toLocaleString()}`;
+    return `${emoji} : 💰 <b>SOL ${data.direction}</b>\n` +
+           `💰 <i>Amount:</i> ${data.amountSol} SOL\n` +
+           `📤 <i>From:</i> <code>${shortSource}</code>\n` +
+           `📥 <i>To:</i> <code>${shortDest}</code>\n` +
+           `🔗 <i>Tx:</i> <a href="${explorerUrl}">View</a>\n` +
+           `⏱ <i>Time:</i> ${new Date(data.time).toLocaleString()} \n`;
   }
 
   formatTokenTransfer(data, explorerUrl, shortSource, shortDest) {
-    const emoji = data.direction === 'IN' ? '📥' : '📤';
+    const emoji = data.direction === 'IN' ? '⬇️' : '⬆️';
     const shortMint = this.shortenAddress(data.mint);
     
-    return `${emoji} <b>Token ${data.direction}</b>\n` +
-           `💰 <b>Amount:</b> ${data.amount.toFixed(6)} ${data.symbol}\n` +
-           `🪙 <b>Mint:</b> <code>${shortMint}</code>\n` +
-           `📤 <b>From:</b> <code>${shortSource}</code>\n` +
-           `📥 <b>To:</b> <code>${shortDest}</code>\n` +
-           `🔗 <b>Tx:</b> <a href="${explorerUrl}">View</a>\n` +
-           `⏱ <b>Time:</b> ${new Date(data.time).toLocaleString()}`;
+    return `${emoji}: 🪙<b> Token ${data.direction}</b>\n` +
+           `💰 <i>Amount:</i> ${data.amount.toFixed(6)} ${data.symbol}\n` +
+           `🪙 <i>Mint:</i> <code>${shortMint}</code>\n` +
+           `📤 <i>From:</i> <code>${shortSource}</code>\n` +
+           `📥 <i>To:</i> <code>${shortDest}</code>\n` +
+           `🔗 <i>Tx:</i> <a href="${explorerUrl}">View</a>\n` +
+           `⏱ <i>Time:</i> ${new Date(data.time).toLocaleString()} \n`;
   }
 }
 
